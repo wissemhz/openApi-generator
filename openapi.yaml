@@ -1,36 +1,95 @@
 openapi: 3.0.0
 info:
-  title: Generated API
+  title: UPPJ redirectAPI
   version: 1.0.0
 paths:
   /initUppj:
     post:
-      summary: POST /initUppj
+      summary:
+        "Cette API permet de r\xE9cup\xE9rer une URL de d\xE9branchement vers\
+        \ UPPJ"
+      tags:
+        - API init
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/initUppjReqDto'
+              $ref: "#/components/schemas/initUppjReqDto"
+            example:
+              callerId: SSEC
+              opportunityId: P20250725006335
+              routeBackURL: http://souscription-ecommerce-qual.bnpparisbas-pf.com
+              uploadMode: TUNN
+              isKnownClient: false
+              isSwitchMobile: false
+              theme: THEME1
+              commercialStructureDto:
+                companyCode: "100"
+                branch: "129"
+                distributorNumber: "1007346166"
+                territory: FRA
+              applicantsContextDto:
+                - role: TIT
+              proofsContextDto:
+                - proofCode: "58310"
+                  proofControlType: STANDARD
+              callerOnboardingType: FULL_ONLINE
+              businessLine: ECOM
+              onboardingType: VATC
+              canal: ONLINE
+              stepsDto:
+                - id: identification
+                  label: Identification
+                  status: done
+                - id: simulation
+                  label: Simulation
+                  status: done
+                - id: documents
+                  label: Documents
+                  status: active
+                - id: signature
+                  label: Signature
+                  status: pending
+                - id: confirmation
+                  label: Confirmation
+                  status: pending
+              recapOfferDto:
+                durationInMonths: 5
+                firstUseAmount: 1977
+                taeg: 4%
+                interestAmount: 0
+                numberOfInstallments: 5
+                totalAmountDue: 1977
+                installmentWithInsurance: 395.4
+                totalWithInsurance: 2084.13
+                defermentInDays: 30
+                monthlyDebitDay: 7
       responses:
-        '200':
-          description: Success
+        "200":
+          description: "Succ\xE8s"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/initUppjRespDto'
-        '400':
-          description: Client Error
+                $ref: "#/components/schemas/initUppjRespDto"
+        "400":
+          description: Erreur de validation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDto'
-        '500':
-          description: Server Error
+                $ref: "#/components/schemas/ErrorDto"
+        "403":
+          description: "Acc\xE8s refus\xE9"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDto'
+                $ref: "#/components/schemas/ErrorDto"
+        "500":
+          description: Erreur interne du serveur
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorDto"
 components:
   schemas:
     initUppjReqDto:
@@ -38,121 +97,116 @@ components:
       properties:
         callerId:
           type: string
-          description: Identifiant de l'appelant
-          example: SSEC
         opportunityId:
           type: string
-          description: Numéro de souscription
-          example: P20250725006335
         routeBackURL:
           type: string
-          description: URL de retour
-          example: http://souscription-ecommerce-qual.bnpparisbas-pf.com
         uploadMode:
           type: string
-          description: Mode de téléchargement
-          example: TUNN
         isKnownClient:
           type: boolean
-          description: Fonction client connu
-          example: false
         isSwitchMobile:
           type: boolean
-          description: Switch desk/mobile
-          example: false
         theme:
           type: string
-          description: Thème d'affichage
-          example: THEME1
-        commercialStructure:
-          type: object
-          description: Structure commerciale
-          example: '{"companyCode": "100", "branch": "129", "distributorNumber": "1007346166",
-            "territory": "FRA"}'
-        applicantsContext:
-          type: string
-          description: Liste des signataires
-          example: '[{"role": "TIT"}]'
-        proofsContext:
-          type: string
-          description: Liste des justificatifs
-          example: '[{"proofCode": "58310", "proofControlType": "STANDARD"}]'
+        commercialStructureDto:
+          $ref: "#/components/schemas/CommercialStructureDto"
+        applicantsContextDto:
+          type: array
+          items:
+            $ref: "#/components/schemas/ApplicantDto"
+        proofsContextDto:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProofDto"
         callerOnboardingType:
           type: string
-          description: Type d’onboarding côté appelant
-          example: FULL_ONLINE
         businessLine:
           type: string
-          description: Ligne métier
-          example: ECOM
         onboardingType:
           type: string
-          description: Type d’onboarding
-          example: VATC
         canal:
           type: string
-          description: Canal
-          example: ONLINE
-        steps:
+        stepsDto:
+          type: array
+          items:
+            $ref: "#/components/schemas/StepDto"
+        recapOfferDto:
+          $ref: "#/components/schemas/RecapOfferDto"
+    CommercialStructureDto:
+      type: object
+      properties:
+        companyCode:
           type: string
-          description: Étapes à afficher dans le stepper
-          example: '[{"id": "identification", "label": "Identification", "status":
-            "done"}, {"id": "simulation", "label": "Simulation", "status": "done"},
-            {"id": "documents", "label": "Documents", "status": "active"}, {"id":
-            "signature", "label": "Signature", "status": "pending"}, {"id": "confirmation",
-            "label": "Confirmation", "status": "pending"}]'
-        recapOffer:
-          type: object
-          description: Offre à récapituler
-          example: '{"durationInMonths": 5, "firstUseAmount": 1977, "taeg": "4%",
-            "interestAmount": 0, "numberOfInstallments": 5, "totalAmountDue": 1977,
-            "installmentWithInsurance": 395.40, "totalWithInsurance": 2084.13, "defermentInDays":
-            30, "monthlyDebitDay": 7}'
-      required:
-      - callerId
-      - opportunityId
-      - routeBackURL
-      - uploadMode
-      - isKnownClient
-      - isSwitchMobile
-      - theme
-      - commercialStructure
-      - applicantsContext
-      - proofsContext
-      - callerOnboardingType
-      - businessLine
-      - onboardingType
-      - canal
-      - steps
-      - recapOffer
+        branch:
+          type: string
+        distributorNumber:
+          type: string
+        territory:
+          type: string
+    ApplicantDto:
+      type: object
+      properties:
+        role:
+          type: string
+    ProofDto:
+      type: object
+      properties:
+        proofCode:
+          type: string
+        proofControlType:
+          type: string
+    StepDto:
+      type: object
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+        status:
+          type: string
+    RecapOfferDto:
+      type: object
+      properties:
+        durationInMonths:
+          type: integer
+        firstUseAmount:
+          type: number
+        taeg:
+          type: string
+        interestAmount:
+          type: number
+        numberOfInstallments:
+          type: integer
+        totalAmountDue:
+          type: number
+        installmentWithInsurance:
+          type: number
+        totalWithInsurance:
+          type: number
+        defermentInDays:
+          type: integer
+        monthlyDebitDay:
+          type: integer
     initUppjRespDto:
       type: object
       properties:
         UppjUrl:
           type: string
-          description: URL de redirection vers le parcours UPPJ
-          example: https://uppj.com/redirect
-      example:
-        UppjUrl: https://uppj.com/redirect
     ErrorDto:
       type: object
       properties:
         error:
           type: string
-          description: Code d'erreur
           example: INVALID_REQUEST
         error_description:
           type: string
-          description: Message d'erreur
-          example: Invalid input
+          example: Le format du champ 'callerId' est invalide
         additional_information:
           type: object
-          description: Infos supplémentaires
-          example: '{ "field": "value" }'
+          example:
+            field: callerId
+            reason: missing or malformed
       required:
-      - error
-      - error_description
-      example:
-        error: INVALID_REQUEST
-        error_description: Invalid input
-        additional_information: '{ "field": "value" }'
+        - error
+        - error_description
