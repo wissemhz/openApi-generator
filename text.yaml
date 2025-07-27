@@ -1,0 +1,30 @@
+import java.io.IOException;
+import java.net.ConnectException;
+import java.util.concurrent.TimeoutException;
+
+import org.springframework.web.reactive.function.client.WebClientRequestException;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
+import reactor.util.retry.Retry;
+
+private ExchangeFilterFunction retryFilter(ClientsProperties.ServiceClientConfig.RetryConfig retryConfig) {
+    return (request, next) -> next.exchange(request)
+        .retryWhen(
+            Retry.backoff(retryConfig.getAttempts(), Duration.ofMillis(retryConfig.getDelay()))
+                .filter(throwable ->
+                        // Retry sur 5xx
+                        (throwable instanceof WebClientResponseException &&
+                         ((WebClientResponseException) throwable).getStatusCode().is5xxServerError())
+
+                        // Retry sur erreurs réseau
+                        || throwable instanceof ConnectException
+                        || throwable instanceof TimeoutException
+                        || throwable instanceof IOException
+                        || throwable instanceof WebClientRequestException
+                )
+                .doBeforeRetry(retrySignal -> {
+                    System.out.printf("🔁 Retry #%d due to %s%n",
+                            retrySignal.totalRetries() + 1,
+                            retrySignal.failure().getClass().getSimpleName());
+                })
+        );
+}
