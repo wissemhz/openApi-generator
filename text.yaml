@@ -28,3 +28,14 @@ private ExchangeFilterFunction retryFilter(ClientsProperties.ServiceClientConfig
                 })
         );
 }
+
+
+
+    private ExchangeFilterFunction traceIdInterceptor() {
+        return ExchangeFilterFunction.ofRequestProcessor(request -> {
+            ClientRequest traced = ClientRequest.from(request)
+                    .header("X-Trace-Id", UUID.randomUUID().toString())
+                    .build();
+            return Mono.just(traced);
+        });
+    }
