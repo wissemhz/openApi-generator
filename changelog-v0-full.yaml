@@ -1,0 +1,299 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: auto
+      changes:
+        - createTable:
+            tableName: uppj_session
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT AUTO_INCREMENT PRIMARY KEY
+              - column:
+                  name: caller_id
+                  type: VARCHAR(255)
+              - column:
+                  name: opportunity_id
+                  type: VARCHAR(255)
+              - column:
+                  name: onboarding_id
+                  type: VARCHAR(255)
+              - column:
+                  name: route_back_url
+                  type: VARCHAR(255)
+              - column:
+                  name: upload_mode
+                  type: VARCHAR(255)
+              - column:
+                  name: is_known_client
+                  type: BOOLEAN
+              - column:
+                  name: is_switch_mobile
+                  type: BOOLEAN
+              - column:
+                  name: business_line
+                  type: VARCHAR(255)
+              - column:
+                  name: caller_onboarding_type
+                  type: VARCHAR(255)
+              - column:
+                  name: canal
+                  type: VARCHAR(255)
+              - column:
+                  name: onboarding_type
+                  type: VARCHAR(255)
+              - column:
+                  name: theme
+                  type: VARCHAR(255)
+  - changeSet:
+      id: 2
+      author: auto
+      changes:
+        - createTable:
+            tableName: recap_offer
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT AUTO_INCREMENT PRIMARY KEY
+              - column:
+                  name: first_use_amount
+                  type: DECIMAL(19,2)
+              - column:
+                  name: taeg
+                  type: VARCHAR(255)
+              - column:
+                  name: interest_amount
+                  type: DECIMAL(19,2)
+              - column:
+                  name: number_of_installments
+                  type: INT
+              - column:
+                  name: total_amount_due
+                  type: DECIMAL(19,2)
+              - column:
+                  name: installment_with_insurance
+                  type: DECIMAL(19,2)
+              - column:
+                  name: total_with_insurance
+                  type: DECIMAL(19,2)
+              - column:
+                  name: deferment_in_days
+                  type: INT
+              - column:
+                  name: monthly_debit_day
+                  type: INT
+  - changeSet:
+      id: 3
+      author: auto
+      changes:
+        - createTable:
+            tableName: commercial_structure
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT AUTO_INCREMENT PRIMARY KEY
+              - column:
+                  name: company_code
+                  type: VARCHAR(255)
+              - column:
+                  name: branch
+                  type: VARCHAR(255)
+              - column:
+                  name: distributor_number
+                  type: VARCHAR(255)
+              - column:
+                  name: territory
+                  type: VARCHAR(255)
+  - changeSet:
+      id: 4
+      author: auto
+      changes:
+        - createTable:
+            tableName: proof_context
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT AUTO_INCREMENT PRIMARY KEY
+              - column:
+                  name: proof_code
+                  type: VARCHAR(255) NOT NULL
+              - column:
+                  name: proof_control_type
+                  type: VARCHAR(255) NOT NULL
+              - column:
+                  name: uppj_session_id
+                  type: BIGINT
+  - changeSet:
+      id: 5
+      author: auto
+      changes:
+        - createTable:
+            tableName: applicant_context
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT AUTO_INCREMENT PRIMARY KEY
+              - column:
+                  name: role
+                  type: VARCHAR(255)
+              - column:
+                  name: uppj_session_id
+                  type: BIGINT
+  - changeSet:
+      id: 6
+      author: auto
+      changes:
+        - createTable:
+            tableName: applicant
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT AUTO_INCREMENT PRIMARY KEY
+              - column:
+                  name: role
+                  type: VARCHAR(255)
+              - column:
+                  name: uppj_session_entity_id
+                  type: BIGINT
+  - changeSet:
+      id: 7
+      author: auto
+      changes:
+        - createTable:
+            tableName: proof
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT AUTO_INCREMENT PRIMARY KEY
+              - column:
+                  name: code
+                  type: VARCHAR(255)
+              - column:
+                  name: proof6_group_id
+                  type: UUID
+              - column:
+                  name: label
+                  type: VARCHAR(255)
+              - column:
+                  name: applicant_id
+                  type: BIGINT
+  - changeSet:
+      id: add-fk_proof_applicant
+      author: auto
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: proof
+            baseColumnNames: applicant_id
+            constraintName: fk_proof_applicant
+            referencedTableName: applicant
+            referencedColumnNames: id
+  - changeSet:
+      id: add-fk_proof_context_uppj_session
+      author: auto
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: proof_context
+            baseColumnNames: uppj_session_id
+            constraintName: fk_proof_context_uppj_session
+            referencedTableName: uppj_session
+            referencedColumnNames: id
+  - changeSet:
+      id: add-fk_applicant_context_uppj_session
+      author: auto
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: applicant_context
+            baseColumnNames: uppj_session_id
+            constraintName: fk_applicant_context_uppj_session
+            referencedTableName: uppj_session
+            referencedColumnNames: id
+  - changeSet:
+      id: add-fk_applicant_uppj_session
+      author: auto
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: applicant
+            baseColumnNames: uppj_session_entity_id
+            constraintName: fk_applicant_uppj_session
+            referencedTableName: uppj_session
+            referencedColumnNames: id
+  - changeSet:
+      id: add-fk_uppj_session_recap_offer
+      author: auto
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: uppj_session
+            baseColumnNames: recap_offer_id
+            constraintName: fk_uppj_session_recap_offer
+            referencedTableName: recap_offer
+            referencedColumnNames: id
+  - changeSet:
+      id: add-fk_uppj_session_commercial_structure
+      author: auto
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: uppj_session
+            baseColumnNames: commercial_structure_id
+            constraintName: fk_uppj_session_commercial_structure
+            referencedTableName: commercial_structure
+            referencedColumnNames: id
+  - changeSet:
+      id: add-idx_proof_applicant_id
+      author: auto
+      changes:
+        - createIndex:
+            indexName: idx_proof_applicant_id
+            tableName: proof
+            columns:
+              - column:
+                  name: applicant_id
+  - changeSet:
+      id: add-idx_proof_context_uppj_session_id
+      author: auto
+      changes:
+        - createIndex:
+            indexName: idx_proof_context_uppj_session_id
+            tableName: proof_context
+            columns:
+              - column:
+                  name: uppj_session_id
+  - changeSet:
+      id: add-idx_applicant_context_uppj_session_id
+      author: auto
+      changes:
+        - createIndex:
+            indexName: idx_applicant_context_uppj_session_id
+            tableName: applicant_context
+            columns:
+              - column:
+                  name: uppj_session_id
+  - changeSet:
+      id: add-idx_applicant_uppj_session_entity_id
+      author: auto
+      changes:
+        - createIndex:
+            indexName: idx_applicant_uppj_session_entity_id
+            tableName: applicant
+            columns:
+              - column:
+                  name: uppj_session_entity_id
+  - changeSet:
+      id: add-idx_uppj_session_recap_offer_id
+      author: auto
+      changes:
+        - createIndex:
+            indexName: idx_uppj_session_recap_offer_id
+            tableName: uppj_session
+            columns:
+              - column:
+                  name: recap_offer_id
+  - changeSet:
+      id: add-idx_uppj_session_commercial_structure_id
+      author: auto
+      changes:
+        - createIndex:
+            indexName: idx_uppj_session_commercial_structure_id
+            tableName: uppj_session
+            columns:
+              - column:
+                  name: commercial_structure_id
